@@ -6,11 +6,9 @@
 
 <p align="center"><b>This is the snap for Ghost Desktop</b>, <i>"the professional publishing platform."</i>. It works on Ubuntu, Fedora, Debian, and other major Linux distributions.</p>
 
-<!--
 <p align="center">
 <a href="https://build.snapcraft.io/user/snapcrafters/ghost-desktop"><img src="https://build.snapcraft.io/badge/snapcrafters/ghost-desktop.svg" alt="Snap Status"></a>
 </p>
--->
 
 ## Install
 
