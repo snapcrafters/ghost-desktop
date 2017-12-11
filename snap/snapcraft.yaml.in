@@ -34,16 +34,20 @@ parts:
 
 apps:
   ghost-desktop:
-    # Correct the TMPDIR path for Chromium Framework/Electron to
-    # ensure libappindicator has readable resources.
-    command: env TMPDIR=$XDG_RUNTIME_DIR PATH=/usr/local/bin:${PATH} ${SNAP}/bin/desktop-launch $SNAP/usr/share/Ghost/Ghost
+    command: bin/desktop-launch $SNAP/usr/lib/Ghost/Ghost
     desktop: usr/share/applications/Ghost.desktop
+    # Correct the TMPDIR path for Chromium Framework/Electron to ensure
+    # libappindicator has readable resources.
+    environment:
+      TMPDIR: $XDG_RUNTIME_DIR
     plugs:
       - browser-support
+      - desktop
+      - desktop-legacy
       - gsettings
       - home
       - mount-observe
       - network
       - pulseaudio
       - unity7
-      - x11
+      - wayland
