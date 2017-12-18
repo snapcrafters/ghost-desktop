@@ -1,5 +1,5 @@
 name: ghost-desktop
-version: 1.5.0
+version: 1.5.1
 summary: The professional publishing platform.
 description: |
  A beautiful desktop application enabling you to easily manage multiple
@@ -15,7 +15,7 @@ confinement: strict
 parts:
   ghost-desktop:
     plugin: dump
-    source: https://github.com/TryGhost/Ghost-Desktop/releases/download/v1.5.0/ghost-desktop-1.5.0-debian.deb
+    source: https://github.com/TryGhost/Ghost-Desktop/releases/download/v1.5.1/ghost-desktop-1.5.1-debian.deb
     source-type: deb
     # Correct path to icon.
     prepare: |
@@ -23,8 +23,8 @@ parts:
     after:
       - desktop-gtk2
     stage-packages:
-      - gconf2
       - libasound2
+      - libgconf2-4
       - libnotify4
       - libnspr4
       - libnss3
@@ -42,8 +42,6 @@ apps:
       TMPDIR: $XDG_RUNTIME_DIR
     plugs:
       - browser-support
-      - desktop
-      - desktop-legacy
       - gsettings
       - home
       - mount-observe
@@ -51,3 +49,4 @@ apps:
       - pulseaudio
       - unity7
       - wayland
+      - x11
