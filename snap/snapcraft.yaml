@@ -1,5 +1,6 @@
 name: ghost-desktop
-version: 1.5.2
+version: latest
+version-script: cat $SNAPCRAFT_STAGE/version
 summary: The professional publishing platform.
 description: |
  A beautiful desktop application enabling you to easily manage multiple
@@ -14,18 +15,38 @@ confinement: strict
 
 parts:
   ghost-desktop:
-    plugin: dump
-    source: https://github.com/TryGhost/Ghost-Desktop/releases/download/v1.5.2/ghost-desktop-1.5.2-debian.deb
-    source-type: deb
-    # Correct path to icon.
-    # Clear the execstack - https://forum.snapcraft.io/t/snap-and-executable-stacks/1812
-    prepare: |
-      sed -i 's|Icon=Ghost|Icon=/usr/share/pixmaps/Ghost\.png|' usr/share/applications/Ghost.desktop
-      execstack --clear-execstack usr/lib/Ghost/Ghost
+    plugin: nil
+    override-build: |
+      snapcraftctl build
+      # Get the latest releases json
+      echo "Get GitHub releases..."
+      wget --quiet https://api.github.com/repos/TryGhost/Ghost-Desktop/releases/latest -O releases.json
+
+      # Get the version from the tag_name and the download URL.
+      VERSION=$(jq . releases.json | grep tag_name | cut -d'"' -f4 | sed s'/v//')
+      DEB_URL=$(cat releases.json | jq -r ".assets[] | select(.name | test(\"deb\")) | .browser_download_url")
+      DEB=$(basename "${DEB_URL}")
+
+      echo "Downloading ${DEB_URL}..."
+      wget --quiet "${DEB_URL}" -O "${SNAPCRAFT_PART_INSTALL}/${DEB}"
+
+      echo "Unpacking ${DEB}..."
+      dpkg -x "${SNAPCRAFT_PART_INSTALL}/${DEB}" ${SNAPCRAFT_PART_INSTALL}
+      rm -f releases.json 2>/dev/null
+      rm -f "${SNAPCRAFT_PART_INSTALL}/${DEB}" 2>/dev/null
+      echo $VERSION > $SNAPCRAFT_STAGE/version
+      # Correct the Icon path
+      sed -i 's|Icon=Ghost|Icon=/usr/share/pixmaps/Ghost\.png|' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/Ghost.desktop
     after:
       - desktop-gtk2
     build-packages:
-      - execstack
+      # Ghost Desktop debs are only available for amd64.
+      # Fail builds on other architectures
+      - on amd64:
+        - dpkg
+        - jq
+        - wget
+      - else fail
     stage-packages:
       - libasound2
       - libgconf2-4
@@ -48,6 +69,7 @@ apps:
       - bluez
       - browser-support
       - desktop
+      - desktop-legacy
       - gsettings
       - home
       - mount-observe
