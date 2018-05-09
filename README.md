@@ -12,8 +12,7 @@
 
 ## Install
 
-    sudo apt install snapd-xdg-open
-    sudo snap install ghost-desktop --beta
+    snap install ghost-desktop
 
 ([Don't have snapd installed?](https://snapcraft.io/docs/core/install))
 
@@ -39,19 +38,19 @@ Snapcrafters ([join us](https://forum.snapcraft.io/t/join-snapcrafters/1325)) ar
   - [x] Convert the snap to `strict` confinement, or `classic` confinement if it qualifies
   - [x] Publish the confined snap in the Snap store beta channel
   - [x] Update the install instructions in this `README.md`
-  - [ ] Post a call for testing on the [Snapcraft Forum](https://forum.snapcraft.io) - [link]()
+  - [-] Post a call for testing on the [Snapcraft Forum](https://forum.snapcraft.io)
   - [x] Request your GitHub repository is forked to the Snapcrafters organisation and configured for automated builds
   - [x] Add the provided Snapcraft build badge to this `README.md`
-  - [ ] Publish the snap in the Snap store stable channel
-  - [ ] Update the install instructions in this `README.md`
-  - [ ] Post an announcement in the [Snapcraft Forum](https://forum.snapcraft.io) - [link]()
+  - [x] Publish the snap in the Snap store stable channel
+  - [x] Update the install instructions in this `README.md`
+  - [-] Post an announcement in the [Snapcraft Forum](https://forum.snapcraft.io)
   - [ ] Submit a pull request or patch upstream that adds snap install documentation - contacted upstream via email
-  - [ ] Submit a pull request or patch upstream that adds the `snapcraft.yaml` and any required assets/launchers - [link]()
-  - [ ] Add upstream contact information to the `README.md`  
+  - [ ] Submit a pull request or patch upstream that adds the `snapcraft.yaml` and any required assets/launchers
+  - [ ] Add upstream contact information to the `README.md`
   - If upstream accept the PR:
     - [ ] Request upstream create a Snap store account
     - [ ] Contact the Snap Advocacy team to request the snap be transferred to upstream
-  - [ ] Ask the Snap Advocacy team to celebrate the snap - [link]()
+  - [x] Ask the Snap Advocacy team to celebrate the snap
 
 If you have any questions, [post in the Snapcraft forum](https://forum.snapcraft.io).
 
