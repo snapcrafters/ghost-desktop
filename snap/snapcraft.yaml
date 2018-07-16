@@ -38,7 +38,7 @@ parts:
       # Correct the Icon path
       sed -i 's|Icon=Ghost|Icon=/usr/share/pixmaps/Ghost\.png|' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/Ghost.desktop
     after:
-      - desktop-gtk2
+      - desktop-gtk3
     build-packages:
       # Ghost Desktop debs are only available for amd64.
       # Fail builds on other architectures
