@@ -1,6 +1,4 @@
 name: ghost-desktop
-version: latest
-version-script: cat $SNAPCRAFT_STAGE/version
 summary: The professional publishing platform.
 description: |
  A beautiful desktop application enabling you to easily manage multiple
@@ -9,6 +7,7 @@ description: |
  Ghost is a fully open source, hackable platform for building and
  running a modern online publication. We power blogs, magazines and
  journalists from Zappos to Sky News.
+adopt-info: ghost-desktop
 
 grade: stable
 confinement: strict
@@ -19,8 +18,8 @@ architectures:
 parts:
   ghost-desktop:
     plugin: nil
-    override-build: |
-      snapcraftctl build
+    override-pull: |
+      snapcraftctl pull
       # Get the latest releases json
       echo "Get GitHub releases..."
       wget --quiet https://api.github.com/repos/TryGhost/Ghost-Desktop/releases/latest -O releases.json
@@ -37,7 +36,7 @@ parts:
       dpkg -x "${SNAPCRAFT_PART_INSTALL}/${DEB}" ${SNAPCRAFT_PART_INSTALL}
       rm -f releases.json 2>/dev/null
       rm -f "${SNAPCRAFT_PART_INSTALL}/${DEB}" 2>/dev/null
-      echo $VERSION > $SNAPCRAFT_STAGE/version
+      snapcraftctl set-version "$VERSION"
       # Correct the Icon path
       sed -i 's|Icon=Ghost|Icon=/usr/share/pixmaps/Ghost\.png|' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/Ghost.desktop
     after:
