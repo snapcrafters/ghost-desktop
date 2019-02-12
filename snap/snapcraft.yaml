@@ -15,7 +15,45 @@ confinement: strict
 architectures:
   - build-on: amd64
 
+plugs:
+  gnome-3-26-1604:
+    interface: content
+    target: $SNAP/gnome-platform
+    default-provider: gnome-3-26-1604
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/data-dir/themes
+    default-provider: gtk-common-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/data-dir/icons
+    default-provider: gtk-common-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/data-dir/sounds
+    default-provider: gtk-common-themes
+
 parts:
+  gnome:
+    plugin: nil
+    override-pull: |
+      add-apt-repository -y ppa:ubuntu-desktop/gnome-3-26
+      apt -y update
+      apt -y upgrade
+
+  libappindicator:
+    plugin: nil
+    after:
+      - gnome
+    stage-packages:
+      - libappindicator3-1
+    build-attributes:
+      - no-system-libraries
+    prime:
+      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libdbusmenu*.so*
+      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libappindicator*.so*
+      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libindicator*.so*
+
   ghost-desktop:
     plugin: nil
     override-pull: |
@@ -40,7 +78,11 @@ parts:
       # Correct the Icon path
       sed -i 's|Icon=Ghost|Icon=/usr/share/pixmaps/Ghost\.png|' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/Ghost.desktop
     after:
-      - desktop-gtk3
+      - gnome
+      - desktop-gnome-platform
+      - libappindicator
+    build-attributes:
+      - no-system-libraries
     build-packages:
       - dpkg
       - jq
@@ -48,24 +90,28 @@ parts:
     stage-packages:
       - libasound2
       - libgconf2-4
-      - libnotify4
       - libnspr4
       - libnss3
-      - libpulse0
       - libxss1
-      - libxtst6
 
 apps:
   ghost-desktop:
     command: bin/desktop-launch $SNAP/usr/lib/Ghost/Ghost
     desktop: usr/share/applications/Ghost.desktop
-    # Correct the TMPDIR path for Chromium Framework/Electron to ensure
-    # libappindicator has readable resources.
     environment:
+      # Correct the TMPDIR path for Chromium Framework/Electron to
+      # ensure libappindicator has readable resources
       TMPDIR: $XDG_RUNTIME_DIR
+      # Coerce XDG_CURRENT_DESKTOP to Unity so that App Indicators
+      # are used and do not fall back to Notification Area applets
+      # or disappear completely.
+      XDG_CURRENT_DESKTOP: Unity
+      # Fallback to XWayland if running in a Wayland session.
+      DISABLE_WAYLAND: 1
     plugs:
       - bluez
       - browser-support
+      - cups-control
       - desktop
       - desktop-legacy
       - gsettings
