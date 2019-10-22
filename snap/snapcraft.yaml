@@ -17,10 +17,10 @@ architectures:
   - build-on: amd64
 
 plugs:
-  gnome-3-26-1604:
+  gnome-3-28-1804:
     interface: content
     target: $SNAP/gnome-platform
-    default-provider: gnome-3-26-1604
+    default-provider: gnome-3-28-1804
   gtk-3-themes:
     interface: content
     target: $SNAP/data-dir/themes
@@ -43,7 +43,7 @@ parts:
     build-packages:
       - software-properties-common
     override-pull: |
-      add-apt-repository -y ppa:ubuntu-desktop/gnome-3-26
+      add-apt-repository -y ppa:ubuntu-desktop/gnome-3-28
       apt -y update
       apt -y upgrade
 
@@ -95,7 +95,19 @@ parts:
       - libnspr4
       - libnss3
       - libxss1
-
+  desktop-gnome-platform:
+    build-packages:
+    - build-essential
+    - libgtk-3-dev
+    make-parameters:
+    - FLAVOR=gtk3
+    override-build: |
+      snapcraftctl build
+      mkdir -pv $SNAPCRAFT_PART_INSTALL/gnome-platform
+    plugin: make
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: gtk
+    
 apps:
   ghost-desktop:
     command: bin/desktop-launch $SNAP/usr/lib/Ghost/Ghost
