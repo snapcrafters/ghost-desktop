@@ -8,6 +8,7 @@ description: |
  running a modern online publication. We power blogs, magazines and
  journalists from Zappos to Sky News.
 adopt-info: ghost-desktop
+base: core18
 
 grade: stable
 confinement: strict
