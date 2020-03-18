@@ -16,45 +16,13 @@ confinement: strict
 architectures:
   - build-on: amd64
 
-plugs:
-  gnome-3-28-1804:
-    interface: content
-    target: $SNAP/gnome-platform
-    default-provider: gnome-3-28-1804
-  gtk-3-themes:
-    interface: content
-    target: $SNAP/data-dir/themes
-    default-provider: gtk-common-themes
-  icon-themes:
-    interface: content
-    target: $SNAP/data-dir/icons
-    default-provider: gtk-common-themes
-  sound-themes:
-    interface: content
-    target: $SNAP/data-dir/sounds
-    default-provider: gtk-common-themes
-
 parts:
   bsi-trigger: # A non-built part, only used to trigger builds in build.snapcraft.io on upstream changes
     plugin: nil
     source: https://github.com/TryGhost/Ghost-Desktop.git
-  desktop-gnome-platform:
-    build-packages:
-    - build-essential
-    - libgtk-3-dev
-    make-parameters:
-    - FLAVOR=gtk3
-    override-build: |
-      snapcraftctl build
-      mkdir -pv $SNAPCRAFT_PART_INSTALL/gnome-platform
-    plugin: make
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-subdir: gtk
 
   libappindicator:
     plugin: nil
-    after:
-      - desktop-gnome-platform
     stage-packages:
       - libappindicator3-1
     prime:
@@ -86,34 +54,29 @@ parts:
       # Correct the Icon path
       sed -i 's|Icon=Ghost|Icon=/usr/share/pixmaps/Ghost\.png|' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/Ghost.desktop
     after:
-      - desktop-gnome-platform
       - libappindicator
     build-packages:
       - dpkg
       - jq
       - wget
     stage-packages:
-      - libasound2
       - libgconf2-4
       - libnspr4
       - libnss3
       - libxss1
-  desktop-gnome-platform:
-    build-packages:
-    - build-essential
-    - libgtk-3-dev
-    make-parameters:
-    - FLAVOR=gtk3
-    override-build: |
-      snapcraftctl build
-      mkdir -pv $SNAPCRAFT_PART_INSTALL/gnome-platform
-    plugin: make
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-subdir: gtk
-    
+  cleanup:
+    after: [ghost-desktop]
+    plugin: nil
+    build-snaps: [ gnome-3-28-1804 ]
+    override-prime: |
+        set -eux
+        cd /snap/gnome-3-28-1804/current
+        find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/{} \;
+
 apps:
   ghost-desktop:
-    command: bin/desktop-launch $SNAP/usr/lib/Ghost/Ghost
+    extensions: [gnome-3-28]
+    command: usr/lib/Ghost/Ghost
     desktop: usr/share/applications/Ghost.desktop
     environment:
       # Correct the TMPDIR path for Chromium Framework/Electron to
@@ -126,18 +89,11 @@ apps:
       # Fallback to XWayland if running in a Wayland session.
       DISABLE_WAYLAND: 1
     plugs:
-      - bluez
       - browser-support
       - cups-control
-      - desktop
-      - desktop-legacy
-      - gsettings
       - home
-      - mount-observe
       - network
       - opengl
       - password-manager-service
       - pulseaudio
       - unity7
-      - wayland
-      - x11
