@@ -89,18 +89,11 @@ apps:
       # Fallback to XWayland if running in a Wayland session.
       DISABLE_WAYLAND: 1
     plugs:
-      - bluez
       - browser-support
       - cups-control
-      - desktop
-      - desktop-legacy
-      - gsettings
       - home
-      - mount-observe
       - network
       - opengl
       - password-manager-service
       - pulseaudio
       - unity7
-      - wayland
-      - x11
